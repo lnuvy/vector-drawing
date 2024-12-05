@@ -20,6 +20,13 @@
     ],
     "description": "description"
   },
+  "clo": {
+    "prefix": "clo",
+    "body": [
+      "console.log(`${1:data}`, ${1:data})"
+    ],
+    "description": "clo"
+  },
   "rafce kebab case component template": {
     "prefix": "rrr",
     "body": [
@@ -47,5 +54,22 @@
       "export default ${1:first}"
     ],
     "description": "ttt"
+  },
+  "create dynamic context": {
+    "prefix": "cdc",
+    "body": [
+      "\"use client\"",
+      
+      "import { createDynamicContext } from \"@/app/_context/create-dynamic-context\"",
+      "",
+      "interface ${1:Name}Props {}",
+      "",
+      "const { ContextProvider, useContext } = createDynamicContext<${1:Name}Props>()",
+      "",
+      "export const use${1:Name} = useContext",
+      "export const ${1:Name}Provider = ContextProvider",
+      ""
+    ],
+    "description": "create dynamic context "
   },
 }
