@@ -15,12 +15,9 @@ const CircleLayer = () => {
           y={ellipse.y}
           radiusX={ellipse.radiusX}
           radiusY={ellipse.radiusY}
-          stroke="#000"
-          strokeWidth={2}
+          stroke={ellipse.stroke}
+          strokeWidth={ellipse.strokeWidth}
           draggable={tool === Tool.Cursor}
-          onDragStart={e => {
-            console.log(e)
-          }}
         />
       ))}
     </Layer>

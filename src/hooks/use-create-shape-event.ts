@@ -1,18 +1,19 @@
 import Konva from "konva"
 import { useState } from "react"
 import { useShapesContext } from "../contexts/shapes-context"
-import { Tool } from "../contexts/select-tool-context"
+import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
 
 interface Point {
   x: number
   y: number
 }
 
-export const useCreateShapeEvent = (tool: Tool) => {
+export const useCreateShapeEvent = () => {
   const [startPoint, setStartPoint] = useState<Point | null>(null)
 
   const [isLineDrawing, setIsLineDrawing] = useState(false)
 
+  const { color, weight, tool } = useSelectToolContext()
   const { setCircles, setLines, setPreviewLine } = useShapesContext()
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
@@ -38,6 +39,8 @@ export const useCreateShapeEvent = (tool: Tool) => {
           radiusX: 0,
           radiusY: 0,
           draggable: true,
+          stroke: color,
+          strokeWidth: weight,
         }
 
         setCircles(prev => [...prev, ellipse])
@@ -48,28 +51,15 @@ export const useCreateShapeEvent = (tool: Tool) => {
        * 직선
        */
       case Tool.SimpleLine: {
-        if (isLineDrawing) {
-          setLines(prev => {
-            const lastIndex = prev.length - 1
-            return prev.map((line, index) =>
-              index === lastIndex
-                ? { ...line, points: line.points ? [...line.points, pos.x, pos.y] : [pos.x, pos.y] }
-                : line,
-            )
-          })
-          setPreviewLine(null)
-          setIsLineDrawing(false)
-        } else {
-          const line: Konva.LineConfig = {
-            points: [pos.x, pos.y],
-          }
-
-          setLines(prev => [...prev, line])
-          setPreviewLine({
-            points: [pos.x, pos.y],
-          })
-          setIsLineDrawing(true)
+        const line: Konva.LineConfig = {
+          points: [pos.x, pos.y],
         }
+
+        setLines(prev => [...prev, line])
+        setPreviewLine({
+          points: [pos.x, pos.y],
+        })
+        setIsLineDrawing(true)
         break
       }
     }
@@ -144,7 +134,12 @@ export const useCreateShapeEvent = (tool: Tool) => {
           const lastIndex = prev.length - 1
           return prev.map((line, index) =>
             index === lastIndex
-              ? { ...line, points: line.points ? [...line.points, pos.x, pos.y] : [pos.x, pos.y] }
+              ? {
+                  ...line,
+                  points: line.points ? [...line.points, pos.x, pos.y] : [pos.x, pos.y],
+                  stroke: color,
+                  strokeWidth: weight,
+                }
               : line,
           )
         })

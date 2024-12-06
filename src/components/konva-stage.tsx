@@ -1,12 +1,10 @@
 import { Stage } from "react-konva"
 import { useCreateShapeEvent } from "../hooks/use-create-shape-event"
 import CircleLayer from "./circle-layer"
-import { useSelectToolContext } from "../contexts/select-tool-context"
 import LineLayer from "./line-layer"
 
 const KonvaStage = () => {
-  const { tool } = useSelectToolContext()
-  const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent(tool)
+  const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
 
   return (
     <Stage
