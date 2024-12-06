@@ -29,7 +29,7 @@ export const SelectToolContextProvider = ({ children }: { children: React.ReactN
   // header selected
   const [tool, setTool] = useState(Tool.Cursor)
   // strokeWidth
-  const [weight, setWeight] = useState(10)
+  const [weight, setWeight] = useState(5)
   // stroke
   const [color, setColor] = useState("#d01010")
 

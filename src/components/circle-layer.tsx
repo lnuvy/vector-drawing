@@ -4,7 +4,7 @@ import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
 
 const CircleLayer = () => {
   const { tool } = useSelectToolContext()
-  const { circles } = useShapesContext()
+  const { circles, setCircles } = useShapesContext()
 
   return (
     <Layer>
@@ -18,6 +18,8 @@ const CircleLayer = () => {
           stroke={ellipse.stroke}
           strokeWidth={ellipse.strokeWidth}
           draggable={tool === Tool.Cursor}
+          onDragStart={() => setCircles(prev => prev.map(c => ({ ...c, isDragging: c.id === ellipse.id })))}
+          onDragEnd={() => setCircles(prev => prev.map(c => ({ ...c, isDragging: false })))}
         />
       ))}
     </Layer>

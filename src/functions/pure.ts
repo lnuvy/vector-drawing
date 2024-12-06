@@ -1,11 +1,13 @@
-export const throttle = (func: (...args: unknown[]) => void, limit: number) => {
+export const throttle = <T extends unknown[], R>(func: (...args: T) => R, limit: number) => {
   let inThrottle = false
 
-  return (...args: unknown[]) => {
+  return (...args: T): R => {
     if (!inThrottle) {
-      func(...args)
+      const result = func(...args)
       inThrottle = true
       setTimeout(() => (inThrottle = false), limit)
+      return result
     }
+    return func(...args)
   }
 }

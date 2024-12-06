@@ -5,6 +5,7 @@ import { cn } from "../functions/cn"
 
 const ToolsHeader = () => {
   const { tool, setTool } = useSelectToolContext()
+
   return (
     <header className="h-[60px]">
       <div className="fixed right-0 top-0 border border-gray-300 shadow-md">
@@ -54,21 +55,21 @@ const HEADER_MENUS = [
   },
 
   {
-    id: 9,
+    id: 3,
     name: "Color",
     type: null,
     Icon: Palette,
     split: false,
   },
   {
-    id: 10,
+    id: 4,
     name: "Weight",
     type: null,
     Icon: Bold,
     split: true,
   },
   {
-    id: 3,
+    id: 5,
     name: "Cursor",
     type: Tool.Cursor,
     Icon: Hand,
@@ -76,35 +77,35 @@ const HEADER_MENUS = [
   },
 
   {
-    id: 4,
+    id: 6,
     name: "Line",
     type: Tool.SimpleLine,
     Icon: PenLine,
     split: false,
   },
   {
-    id: 5,
+    id: 7,
     name: "Spline",
     type: Tool.Spline,
     Icon: Spline,
     split: false,
   },
   {
-    id: 6,
+    id: 8,
     name: "Circle",
     type: Tool.Circle,
     Icon: Circle,
     split: false,
   },
   {
-    id: 7,
+    id: 9,
     name: "Rect",
     type: Tool.Rect,
     Icon: RectangleHorizontal,
     split: false,
   },
   {
-    id: 8,
+    id: 10,
     name: "Polygon",
     type: Tool.Polygon,
     Icon: Pentagon,

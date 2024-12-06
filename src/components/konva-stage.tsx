@@ -2,6 +2,7 @@ import { Stage } from "react-konva"
 import { useCreateShapeEvent } from "../hooks/use-create-shape-event"
 import CircleLayer from "./circle-layer"
 import LineLayer from "./line-layer"
+import RectLayer from "./rect-layer"
 
 const KonvaStage = () => {
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
@@ -16,6 +17,7 @@ const KonvaStage = () => {
     >
       <CircleLayer />
       <LineLayer />
+      <RectLayer />
     </Stage>
   )
 }
