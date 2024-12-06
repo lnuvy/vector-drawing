@@ -2,7 +2,7 @@ import Konva from "konva"
 import { useState } from "react"
 import { AddDragging, useShapesContext } from "../contexts/shapes-context"
 import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
-import { throttle } from "../functions/pure"
+import { throttle } from "../functions/util"
 
 interface Point {
   x: number

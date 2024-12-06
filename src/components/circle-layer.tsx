@@ -17,6 +17,7 @@ const CircleLayer = () => {
           radiusY={ellipse.radiusY}
           stroke={ellipse.stroke}
           strokeWidth={ellipse.strokeWidth}
+          opacity={ellipse.isDragging ? 0.5 : 1}
           draggable={tool === Tool.Cursor}
           onDragStart={() => setCircles(prev => prev.map(c => ({ ...c, isDragging: c.id === ellipse.id })))}
           onDragEnd={() => setCircles(prev => prev.map(c => ({ ...c, isDragging: false })))}

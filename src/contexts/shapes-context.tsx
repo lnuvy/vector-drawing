@@ -10,8 +10,8 @@ interface ShapesContextProps {
   previewLine: Konva.LineConfig | null
   setPreviewLine: React.Dispatch<React.SetStateAction<Konva.LineConfig | null>>
 
-  circles: Konva.EllipseConfig[]
-  setCircles: React.Dispatch<React.SetStateAction<Konva.EllipseConfig[]>>
+  circles: AddDragging<Konva.EllipseConfig>[]
+  setCircles: React.Dispatch<React.SetStateAction<AddDragging<Konva.EllipseConfig>[]>>
   rects: AddDragging<Konva.RectConfig>[]
   setRects: React.Dispatch<React.SetStateAction<AddDragging<Konva.RectConfig>[]>>
   polygons: AddDragging<Konva.RegularPolygonConfig>[]
@@ -23,7 +23,7 @@ const { ContextProvider, useContext } = createDynamicContext<ShapesContextProps>
 export const useShapesContext = useContext
 export const ShapesContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [lines, setLines] = useState<AddDragging<Konva.LineConfig>[]>([])
-  const [circles, setCircles] = useState<Konva.EllipseConfig[]>([])
+  const [circles, setCircles] = useState<AddDragging<Konva.EllipseConfig>[]>([])
   const [rects, setRects] = useState<AddDragging<Konva.RectConfig>[]>([])
   const [polygons, setPolygons] = useState<AddDragging<Konva.RegularPolygonConfig>[]>([])
 
