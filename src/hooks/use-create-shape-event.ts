@@ -9,10 +9,11 @@ interface Point {
 }
 
 export const useCreateShapeEvent = (tool: Tool) => {
-  const [isDrawing, setIsDrawing] = useState(false)
   const [startPoint, setStartPoint] = useState<Point | null>(null)
 
-  const { setCircles } = useShapesContext()
+  const [isLineDrawing, setIsLineDrawing] = useState(false)
+
+  const { setCircles, setLines, setPreviewLine } = useShapesContext()
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
     const stage = e.target.getStage()
@@ -27,11 +28,10 @@ export const useCreateShapeEvent = (tool: Tool) => {
       return
     }
 
-    setIsDrawing(true)
     setStartPoint({ x: pos.x, y: pos.y })
 
     switch (tool) {
-      case "circle": {
+      case Tool.Circle: {
         const ellipse: Konva.EllipseConfig = {
           x: pos.x,
           y: pos.y,
@@ -41,45 +41,119 @@ export const useCreateShapeEvent = (tool: Tool) => {
         }
 
         setCircles(prev => [...prev, ellipse])
+        break
+      }
 
+      /**
+       * 직선
+       */
+      case Tool.SimpleLine: {
+        if (isLineDrawing) {
+          setLines(prev => {
+            const lastIndex = prev.length - 1
+            return prev.map((line, index) =>
+              index === lastIndex
+                ? { ...line, points: line.points ? [...line.points, pos.x, pos.y] : [pos.x, pos.y] }
+                : line,
+            )
+          })
+          setPreviewLine(null)
+          setIsLineDrawing(false)
+        } else {
+          const line: Konva.LineConfig = {
+            points: [pos.x, pos.y],
+          }
+
+          setLines(prev => [...prev, line])
+          setPreviewLine({
+            points: [pos.x, pos.y],
+          })
+          setIsLineDrawing(true)
+        }
         break
       }
     }
   }
 
   const handleMouseMove = (e: Konva.KonvaEventObject<Event>) => {
-    if (!isDrawing || !startPoint) return
+    switch (tool) {
+      /**
+       * 원 그리기
+       * shift 키를 누르지않으면 타원 가능, shift를 누르면 동그란 원으로 그림
+       */
+      case Tool.Circle:
+        {
+          const stage = e.target.getStage()
+          const pos = stage?.getPointerPosition()
+          if (!pos) return
 
-    if (tool !== Tool.Circle) return
+          const { shiftKey } = e.evt as MouseEvent
 
-    const stage = e.target.getStage()
-    const pos = stage?.getPointerPosition()
-    if (!pos) return
+          if (!startPoint) return
+          const { x: startX, y: startY } = startPoint
+          const width = pos.x - startX
+          const height = pos.y - startY
+          const radiusX = Math.abs(width) / 2
+          const radiusY = Math.abs(height) / 2
 
-    const { shiftKey } = e.evt as MouseEvent
+          const updatedEllipse = {
+            x: startX + width / 2,
+            y: startY + height / 2,
+            radiusX: shiftKey ? Math.max(radiusX, radiusY) : radiusX,
+            radiusY: shiftKey ? Math.max(radiusX, radiusY) : radiusY,
+          }
 
-    const { x: startX, y: startY } = startPoint
-    const width = pos.x - startX
-    const height = pos.y - startY
-    const radiusX = Math.abs(width) / 2
-    const radiusY = Math.abs(height) / 2
+          setCircles(prev => {
+            const lastIndex = prev.length - 1
+            return prev.map((circle, index) => (index === lastIndex ? { ...circle, ...updatedEllipse } : circle))
+          })
+        }
+        break
 
-    const updatedEllipse = {
-      x: startX + width / 2,
-      y: startY + height / 2,
-      radiusX: shiftKey ? Math.max(radiusX, radiusY) : radiusX,
-      radiusY: shiftKey ? Math.max(radiusX, radiusY) : radiusY,
+      /**
+       * 직선
+       * MouseMove 에서는 previewLine 처리
+       */
+      case Tool.SimpleLine: {
+        const stage = e.target.getStage()
+        const pos = stage?.getPointerPosition()
+        if (!pos) return
+
+        if (!startPoint) return
+        if (isLineDrawing) {
+          const { x: startX, y: startY } = startPoint
+
+          setPreviewLine({
+            points: [startX, startY, pos.x, pos.y],
+          })
+        }
+      }
     }
-
-    setCircles(prev => {
-      const lastIndex = prev.length - 1
-      return prev.map((circle, index) => (index === lastIndex ? { ...circle, ...updatedEllipse } : circle))
-    })
   }
 
-  const handleMouseUp = () => {
-    setIsDrawing(false)
+  const handleMouseUp = (e: Konva.KonvaEventObject<Event>) => {
     setStartPoint(null)
+
+    switch (tool) {
+      case Tool.SimpleLine: {
+        const stage = e.target.getStage()
+        const pos = stage?.getPointerPosition()
+        if (!pos) return
+
+        setLines(prev => {
+          const lastIndex = prev.length - 1
+          return prev.map((line, index) =>
+            index === lastIndex
+              ? { ...line, points: line.points ? [...line.points, pos.x, pos.y] : [pos.x, pos.y] }
+              : line,
+          )
+        })
+
+        setPreviewLine(null)
+        setIsLineDrawing(false)
+        break
+      }
+    }
   }
 
   return { handleMouseDown, handleMouseMove, handleMouseUp }
