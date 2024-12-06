@@ -1,7 +1,7 @@
 import Konva from "konva"
-import { Tool } from "../App"
 import { useState } from "react"
 import { useShapesContext } from "../contexts/shapes-context"
+import { Tool } from "../contexts/select-tool-context"
 
 interface Point {
   x: number
@@ -16,7 +16,6 @@ export const useCreateShapeEvent = (tool: Tool) => {
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
     const stage = e.target.getStage()
-
     if (!stage) {
       alert("stage가 없습니다.")
       return
@@ -50,6 +49,8 @@ export const useCreateShapeEvent = (tool: Tool) => {
 
   const handleMouseMove = (e: Konva.KonvaEventObject<Event>) => {
     if (!isDrawing || !startPoint) return
+
+    if (tool !== Tool.Circle) return
 
     const stage = e.target.getStage()
     const pos = stage?.getPointerPosition()

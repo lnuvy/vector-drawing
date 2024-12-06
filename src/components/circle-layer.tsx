@@ -1,27 +1,13 @@
 import { Ellipse, Layer } from "react-konva"
 import { useShapesContext } from "../contexts/shapes-context"
+import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
 
 const CircleLayer = () => {
+  const { tool } = useSelectToolContext()
   const { circles } = useShapesContext()
-  // const [isStageReady, setIsStageReady] = useState(false)
-  // const [isDrawing, setIsDrawing] = useState(false)
-  // const [startPoint, setStartPoint] = useState<Point | null>(null)
 
-  console.log(`circles`, circles)
   return (
     <Layer>
-      {/* <Ellipse
-        x={0}
-        y={0}
-        radiusX={200}
-        radiusY={100}
-        stroke="#000"
-        strokeWidth={2}
-        draggable
-        onDragStart={() => {}}
-        onDragEnd={() => {}}
-      /> */}
-
       {circles.map((ellipse, i) => (
         <Ellipse
           key={i}
@@ -31,7 +17,7 @@ const CircleLayer = () => {
           radiusY={ellipse.radiusY}
           stroke="#000"
           strokeWidth={2}
-          draggable
+          draggable={tool === Tool.Cursor}
           onDragStart={e => {
             console.log(e)
           }}
