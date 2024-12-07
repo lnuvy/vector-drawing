@@ -1,13 +1,13 @@
 import { Fragment } from "react/jsx-runtime"
 import { useSelectToolContext } from "../../contexts/select-tool-context"
 import { cn } from "../../functions/cn"
-import { useKeydownTools } from "../../hooks/use-keydown-tools"
+import { useKeyBindingTools } from "../../hooks/use-key-binding-tools"
 import { useToolsHeaderMenu } from "../../hooks/use-tools-header-menu"
 
 const ToolsHeader = () => {
   const { menus } = useToolsHeaderMenu()
   const { tool } = useSelectToolContext()
-  useKeydownTools()
+  useKeyBindingTools()
 
   return (
     <section className="fixed right-0 top-0 z-10 border border-gray-300 bg-white shadow-md">
