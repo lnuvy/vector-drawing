@@ -25,5 +25,5 @@ export const useKeydownTools = () => {
 
     window.addEventListener("keydown", handleKeydown)
     return () => window.removeEventListener("keydown", handleKeydown)
-  }, [setTool])
+  }, [setTool, undo, redo])
 }
