@@ -1,6 +1,6 @@
 import { Circle, Hand, LucideProps, PenLine, Pentagon, RectangleHorizontal, Redo, Spline, Undo } from "lucide-react"
 import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
-import { useShapesContext } from "../contexts/shapes-context"
+import { useShapesHistoryContext } from "../contexts/shapes-history-context"
 import UnderlineText from "../components/header/underline-text"
 
 interface MenuItem {
@@ -14,7 +14,7 @@ interface MenuItem {
 }
 
 export const useToolsHeaderMenu = () => {
-  const { undo, redo, canUndo, canRedo } = useShapesContext()
+  const { undo, redo, canUndo, canRedo } = useShapesHistoryContext()
   const { setTool } = useSelectToolContext()
 
   const menus: MenuItem[] = [

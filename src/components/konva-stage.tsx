@@ -1,13 +1,13 @@
 import { Ellipse, Layer, Line, Rect, Stage } from "react-konva"
 import { useCreateShapeEvent } from "../hooks/use-create-shape-event"
-import { Shape, useShapesContext } from "../contexts/shapes-context"
+import { Shape, useShapesHistoryContext } from "../contexts/shapes-history-context"
 import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
 import Konva from "konva"
 import SimpleLinePreview from "./simple-line-preview"
 
 const KonvaStage = () => {
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
-  const { shapes, setShapes, setShapesWithHistory } = useShapesContext()
+  const { shapes, setShapes, setShapesWithHistory } = useShapesHistoryContext()
   const { tool } = useSelectToolContext()
 
   const groupByShapeType = shapes.reduce(

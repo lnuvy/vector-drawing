@@ -1,6 +1,6 @@
 import Konva from "konva"
 import { useState } from "react"
-import { Shape, useShapesContext } from "../contexts/shapes-context"
+import { Shape, useShapesHistoryContext } from "../contexts/shapes-history-context"
 import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
 
 interface Point {
@@ -13,7 +13,7 @@ export const useCreateShapeEvent = () => {
   const [isLineDrawing, setIsLineDrawing] = useState(false)
 
   const { color, weight, tool } = useSelectToolContext()
-  const { shapes, setShapes, setShapesWithHistory, setPreviewLine } = useShapesContext()
+  const { shapes, setShapes, setShapesWithHistory, setPreviewLine } = useShapesHistoryContext()
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
     const stage = e.target.getStage()

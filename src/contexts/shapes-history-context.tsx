@@ -11,7 +11,7 @@ export type Shape =
   | (AddDragging<Konva.RectConfig> & { type: Tool.Rect })
   | (AddDragging<Konva.RegularPolygonConfig> & { type: Tool.Polygon })
 
-interface ShapesContextProps {
+interface ShapesHistoryContextProps {
   shapes: Shape[]
   setShapes: React.Dispatch<React.SetStateAction<Shape[]>>
   setShapesWithHistory: React.Dispatch<React.SetStateAction<Shape[]>>
@@ -23,13 +23,13 @@ interface ShapesContextProps {
   canRedo: boolean
 }
 
-const { ContextProvider, useContext } = createDynamicContext<ShapesContextProps>()
+const { ContextProvider, useContext } = createDynamicContext<ShapesHistoryContextProps>()
 
-export const useShapesContext = useContext
+export const useShapesHistoryContext = useContext
 
 const MAX_HISTORY_SIZE = 40
 
-export const ShapesContextProvider = ({ children }: { children: React.ReactNode }) => {
+export const ShapesHistoryContextProvider = ({ children }: { children: React.ReactNode }) => {
   const [shapes, setShapes] = useState<Shape[]>([])
   const [previewLine, setPreviewLine] = useState<Konva.LineConfig | null>(null)
 
@@ -57,6 +57,7 @@ export const ShapesContextProvider = ({ children }: { children: React.ReactNode 
       return newShapes
     })
   }
+
   const undo = () => {
     if (currentHistoryIndex > 0) {
       setCurrentHistoryIndex(prev => prev - 1)

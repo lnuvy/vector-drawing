@@ -11,3 +11,5 @@ export const throttle = <T extends unknown[], R>(func: (...args: T) => R, limit:
     return func(...args)
   }
 }
+
+export const isMac = () => navigator.userAgent.includes("Macintosh") || navigator.platform.includes("Mac")
