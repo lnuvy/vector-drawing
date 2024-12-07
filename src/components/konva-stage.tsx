@@ -2,10 +2,12 @@ import { Ellipse, Layer, Line, Rect, Stage } from "react-konva"
 import { useCreateShapeEvent } from "../hooks/use-create-shape-event"
 import { Shape, useShapesContext } from "../contexts/shapes-context"
 import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
+import Konva from "konva"
+import SimpleLinePreview from "./simple-line-preview"
 
 const KonvaStage = () => {
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
-  const { shapes, setShapes } = useShapesContext()
+  const { shapes, setShapes, setShapesWithHistory } = useShapesContext()
   const { tool } = useSelectToolContext()
 
   const groupByShapeType = shapes.reduce(
@@ -24,8 +26,35 @@ const KonvaStage = () => {
     setShapes(prev => prev.map(s => ({ ...s, isDragging: s.id === shape.id })))
   }
 
-  const dragEndHandler = () => {
-    setShapes(prev => prev.map(s => ({ ...s, isDragging: false })))
+  const dragEndHandler = (e: Konva.KonvaEventObject<Event>, shape: Shape) => {
+    setShapesWithHistory(prev =>
+      prev.map(s => {
+        if (s.id !== shape.id) return s
+
+        const updatedShape = { ...s, isDragging: false }
+
+        switch (shape.type) {
+          case Tool.SimpleLine:
+          case Tool.Spline: {
+            const newLine = { ...shape, isDragging: false }
+            // e.target.x/y() 는 캔버스 좌표계에서 전체 이동거리를 반환하므로 절대위치를 변경해야함
+            const dx = e.target.x() - e.target.getAbsolutePosition().x
+            const dy = e.target.y() - e.target.getAbsolutePosition().y
+
+            // [x1, y1, x2, y2...] 형태이므로 모든 points를 순회해 dx, dy만큼 이동 시켜야함
+            newLine.points = shape.points?.map((coord, i) => (i % 2 === 0 ? coord + dx : coord + dy))
+            return newLine
+          }
+
+          // 기본 도형들은 e.target.x/y()로 업데이트
+          default: {
+            updatedShape.x = e.target.x()
+            updatedShape.y = e.target.y()
+            return updatedShape
+          }
+        }
+      }),
+    )
   }
 
   return (
@@ -50,7 +79,7 @@ const KonvaStage = () => {
                     strokeWidth={shape.strokeWidth}
                     draggable={tool === Tool.Cursor}
                     onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={dragEndHandler}
+                    onDragEnd={e => dragEndHandler(e, shape)}
                   />
                 )
               }
@@ -68,7 +97,7 @@ const KonvaStage = () => {
                     opacity={shape.isDragging ? 0.5 : 1}
                     draggable={tool === Tool.Cursor}
                     onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={dragEndHandler}
+                    onDragEnd={e => dragEndHandler(e, shape)}
                   />
                 )
               }
@@ -79,8 +108,9 @@ const KonvaStage = () => {
                     key={shape.id}
                     {...shape}
                     draggable={tool === Tool.Cursor}
+                    opacity={shape.isDragging ? 0.5 : 1}
                     onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={dragEndHandler}
+                    onDragEnd={e => dragEndHandler(e, shape)}
                   />
                 )
               }
@@ -88,6 +118,8 @@ const KonvaStage = () => {
           </Layer>
         )
       })}
+
+      <SimpleLinePreview />
     </Stage>
   )
 }

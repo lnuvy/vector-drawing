@@ -13,7 +13,7 @@ export const useCreateShapeEvent = () => {
   const [isLineDrawing, setIsLineDrawing] = useState(false)
 
   const { color, weight, tool } = useSelectToolContext()
-  const { shapes, setShapes, setPreviewLine } = useShapesContext()
+  const { shapes, setShapes, setShapesWithHistory, setPreviewLine } = useShapesContext()
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
     const stage = e.target.getStage()
@@ -57,7 +57,6 @@ export const useCreateShapeEvent = () => {
           y: pos.y,
           width: 0,
           height: 0,
-          draggable: true,
           stroke: color,
           strokeWidth: weight,
         }
@@ -198,7 +197,7 @@ export const useCreateShapeEvent = () => {
         const pos = stage?.getPointerPosition()
         if (!pos) return
 
-        setShapes(prev => {
+        setShapesWithHistory(prev => {
           const lastShape = prev[prev.length - 1]
           if (lastShape?.type !== Tool.SimpleLine) return prev
 
@@ -218,6 +217,30 @@ export const useCreateShapeEvent = () => {
 
       case Tool.Spline: {
         setIsLineDrawing(false)
+        setShapesWithHistory(prev => {
+          const lastShape = prev[prev.length - 1]
+          if (lastShape?.type !== Tool.Spline) return prev
+
+          return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
+        })
+        break
+      }
+
+      case Tool.Circle: {
+        setShapesWithHistory(prev => {
+          const lastShape = prev[prev.length - 1]
+          if (lastShape?.type !== Tool.Circle) return prev
+          return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
+        })
+        break
+      }
+
+      case Tool.Rect: {
+        setShapesWithHistory(prev => {
+          const lastShape = prev[prev.length - 1]
+          if (lastShape?.type !== Tool.Rect) return prev
+          return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
+        })
         break
       }
     }

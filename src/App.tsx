@@ -7,12 +7,12 @@ function App() {
   return (
     <div className="relative bg-gray-100">
       <SelectToolContextProvider>
-        <Header />
-        <div className="rounded-lg bg-white shadow-sm">
-          <ShapesContextProvider>
+        <ShapesContextProvider>
+          <Header />
+          <div className="rounded-lg bg-white shadow-sm">
             <KonvaStage />
-          </ShapesContextProvider>
-        </div>
+          </div>
+        </ShapesContextProvider>
       </SelectToolContextProvider>
     </div>
   )
