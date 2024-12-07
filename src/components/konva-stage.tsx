@@ -37,12 +37,13 @@ const KonvaStage = () => {
           case Tool.SimpleLine:
           case Tool.Spline: {
             const newLine = { ...shape, isDragging: false }
-            // e.target.x/y() 는 캔버스 좌표계에서 전체 이동거리를 반환하므로 절대위치를 변경해야함
-            const dx = e.target.x() - e.target.getAbsolutePosition().x
-            const dy = e.target.y() - e.target.getAbsolutePosition().y
-
-            // [x1, y1, x2, y2...] 형태이므로 모든 points를 순회해 dx, dy만큼 이동 시켜야함
-            newLine.points = shape.points?.map((coord, i) => (i % 2 === 0 ? coord + dx : coord + dy))
+            const node = e.target as Konva.Node
+            const dx = node.x()
+            const dy = node.y()
+            newLine.points = shape.points?.map((coord, i) => {
+              return coord + (i % 2 === 0 ? dx : dy)
+            })
+            node.position({ x: 0, y: 0 })
             return newLine
           }
 

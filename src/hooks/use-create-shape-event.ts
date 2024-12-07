@@ -215,34 +215,16 @@ export const useCreateShapeEvent = () => {
         break
       }
 
-      case Tool.Spline: {
-        setIsLineDrawing(false)
+      case Tool.Circle:
+      case Tool.Rect:
+      case Tool.Spline:
         setShapesWithHistory(prev => {
           const lastShape = prev[prev.length - 1]
           if (lastShape?.type !== Tool.Spline) return prev
 
           return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
         })
-        break
-      }
-
-      case Tool.Circle: {
-        setShapesWithHistory(prev => {
-          const lastShape = prev[prev.length - 1]
-          if (lastShape?.type !== Tool.Circle) return prev
-          return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
-        })
-        break
-      }
-
-      case Tool.Rect: {
-        setShapesWithHistory(prev => {
-          const lastShape = prev[prev.length - 1]
-          if (lastShape?.type !== Tool.Rect) return prev
-          return prev.map((shape, index) => (index === prev.length - 1 ? { ...shape } : shape))
-        })
-        break
-      }
+        setIsLineDrawing(false)
     }
   }
 
