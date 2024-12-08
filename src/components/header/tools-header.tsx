@@ -1,8 +1,8 @@
 import { Fragment } from "react/jsx-runtime"
-import { useSelectToolContext } from "../../contexts/select-tool-context"
-import { cn } from "../../functions/cn"
-import { useKeyBindingTools } from "../../hooks/use-key-binding-tools"
-import { useToolsHeaderMenu } from "../../hooks/use-tools-header-menu"
+import { useSelectToolContext } from "@/contexts/select-tool-context"
+import { cn } from "@/functions/cn"
+import { useKeyBindingTools } from "@/hooks/use-key-binding-tools"
+import { useToolsHeaderMenu } from "@/hooks/use-tools-header-menu"
 
 const ToolsHeader = () => {
   const { menus } = useToolsHeaderMenu()

@@ -1,6 +1,6 @@
 import { Layer, Line } from "react-konva"
-import { useSelectToolContext } from "../contexts/select-tool-context"
-import { useShapesHistoryContext } from "../contexts/shapes-history-context"
+import { useSelectToolContext } from "@/contexts/select-tool-context"
+import { useShapesHistoryContext } from "@/contexts/shapes-history-context"
 
 const SimpleLinePreview = () => {
   const { previewLine } = useShapesHistoryContext()

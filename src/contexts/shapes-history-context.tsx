@@ -1,7 +1,7 @@
 import { useState } from "react"
-import { createDynamicContext } from "../hooks/create-dynamic-context"
+import { createDynamicContext } from "@/hooks/create-dynamic-context"
 import type Konva from "konva"
-import { Tool } from "./select-tool-context"
+import { Tool } from "@/contexts/select-tool-context"
 
 export type AddDragging<T> = T & { id: string; isDragging: boolean }
 

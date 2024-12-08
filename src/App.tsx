@@ -1,7 +1,7 @@
-import KonvaStage from "./components/konva-stage"
-import { SelectToolContextProvider } from "./contexts/select-tool-context"
-import Header from "./components/header"
-import { ShapesHistoryContextProvider } from "./contexts/shapes-history-context"
+import KonvaStage from "@/components/konva-stage"
+import { SelectToolContextProvider } from "@/contexts/select-tool-context"
+import Header from "@/components/header"
+import { ShapesHistoryContextProvider } from "@/contexts/shapes-history-context"
 
 function App() {
   return (

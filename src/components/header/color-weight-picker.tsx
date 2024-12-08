@@ -1,5 +1,5 @@
 import { Bold, Palette } from "lucide-react"
-import { useSelectToolContext } from "../../contexts/select-tool-context"
+import { useSelectToolContext } from "@/contexts/select-tool-context"
 
 const ColorWeightPicker = () => {
   const { color, setColor, weight, setWeight } = useSelectToolContext()

@@ -1,7 +1,7 @@
 import Konva from "konva"
 import { useState } from "react"
-import { Shape, useShapesHistoryContext } from "../contexts/shapes-history-context"
-import { Tool, useSelectToolContext } from "../contexts/select-tool-context"
+import { Shape, useShapesHistoryContext } from "@/contexts/shapes-history-context"
+import { Tool, useSelectToolContext } from "@/contexts/select-tool-context"
 
 interface Point {
   x: number

@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { createDynamicContext } from "../hooks/create-dynamic-context"
+import { createDynamicContext } from "@/hooks/create-dynamic-context"
 
 /** 헤더 선택 도구 */
 export enum Tool {
