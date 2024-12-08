@@ -1,13 +1,22 @@
 import { useState } from "react"
 import Konva from "konva"
-import { Tool, useSelectToolContext } from "@/contexts/select-tool-context"
-import { Shape, useShapesHistoryContext } from "@/contexts/shapes-history-context"
+import { useSelectToolContext } from "@/contexts/select-tool-context"
+import { useShapesHistoryContext } from "@/contexts/shapes-history-context"
+import { Point, Shape, Tool } from "@/types"
 
-interface Point {
-  x: number
-  y: number
-}
-
+/** ------------------------------------------------------------------------------
+ * 
+ * 모든 도형의 생성을 관리하는 공용 훅입니다.
+ * 
+ * @return {
+ *   KonvaNodeEvents.onMouseDown,
+ *   KonvaNodeEvents.onMouseMove,
+ *   KonvaNodeEvents.onMouseUp
+ * }
+ * 
+ * @comment 만약 점점 요구사항이 많아지고 사이즈가 커지면 인자로 선택된 툴 종류를 받아서 각각 분리해서 관리하는 것이 좋을 것 같습니다.
+ * 
+ ------------------------------------------------------------------------------ */
 export const useCreateShapeEvent = () => {
   const [startPoint, setStartPoint] = useState<Point | null>(null)
   const [isLineDrawing, setIsLineDrawing] = useState(false)

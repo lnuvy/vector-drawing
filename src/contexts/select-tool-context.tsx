@@ -2,16 +2,7 @@
 
 import { useState } from "react"
 import { createDynamicContext } from "@/hooks/create-dynamic-context"
-
-/** 헤더 선택 도구 */
-export enum Tool {
-  Cursor = "cursor",
-  SimpleLine = "simple-line",
-  Spline = "spline",
-  Rect = "rect",
-  Circle = "circle",
-  Polygon = "polygon",
-}
+import { Tool } from "@/types"
 
 interface SelectToolContextProps {
   tool: Tool

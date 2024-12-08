@@ -1,15 +1,10 @@
 import { useState } from "react"
 import type Konva from "konva"
-import { Tool } from "@/contexts/select-tool-context"
+import { STORAGE_KEY, UNDO_MAX_COUNT } from "@/constants"
+
+import { clearStorageCanvasState, getStorage, getStorageParsed, setStorageCanvasState } from "@/functions/util"
 import { createDynamicContext } from "@/hooks/create-dynamic-context"
-
-export type AddDragging<T> = T & { id: string; isDragging: boolean }
-
-export type Shape =
-  | (AddDragging<Konva.LineConfig> & { type: Tool.SimpleLine | Tool.Spline })
-  | (AddDragging<Konva.EllipseConfig> & { type: Tool.Circle })
-  | (AddDragging<Konva.RectConfig> & { type: Tool.Rect })
-  | (AddDragging<Konva.RegularPolygonConfig> & { type: Tool.Polygon })
+import { Shape } from "@/types"
 
 interface ShapesHistoryContextProps {
   shapes: Shape[]
@@ -21,20 +16,26 @@ interface ShapesHistoryContextProps {
   redo: () => void
   canUndo: boolean
   canRedo: boolean
+  reset: () => void
 }
 
 const { ContextProvider, useContext } = createDynamicContext<ShapesHistoryContextProps>()
 
 export const useShapesHistoryContext = useContext
 
-const MAX_HISTORY_SIZE = 40
-
 export const ShapesHistoryContextProvider = ({ children }: { children: React.ReactNode }) => {
-  const [shapes, setShapes] = useState<Shape[]>([])
+  const [shapes, setShapes] = useState<Shape[]>(() => {
+    return getStorageParsed(STORAGE_KEY.SHAPES) ?? []
+  })
+
   const [previewLine, setPreviewLine] = useState<Konva.LineConfig | null>(null)
 
-  const [history, setHistory] = useState<Shape[][]>([[]])
-  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(0)
+  const [history, setHistory] = useState<Shape[][]>(() => {
+    return getStorageParsed(STORAGE_KEY.UNDO_HISTORY) ?? [[]]
+  })
+  const [currentHistoryIndex, setCurrentHistoryIndex] = useState(() => {
+    return Number(getStorage(STORAGE_KEY.HISTORY_INDEX) ?? 0)
+  })
 
   /**
    * shapes 업데이트와 동시에 history를 업데이트하는 함수
@@ -47,12 +48,12 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
       const newHistory = history.slice(0, currentHistoryIndex + 1)
       newHistory.push(newShapes)
 
-      if (newHistory.length > MAX_HISTORY_SIZE) {
+      if (newHistory.length > UNDO_MAX_COUNT) {
         newHistory.shift()
       }
-
       setHistory(newHistory)
       setCurrentHistoryIndex(newHistory.length - 1)
+      setStorageCanvasState({ shapes: newShapes, history: newHistory, historyIndex: newHistory.length - 1 })
 
       return newShapes
     })
@@ -75,6 +76,15 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
   const canUndo = currentHistoryIndex > 0
   const canRedo = currentHistoryIndex < history.length - 1
 
+  const reset = () => {
+    if (window.confirm("모두 초기화 할까요?!")) {
+      setShapes([])
+      setHistory([[]])
+      setCurrentHistoryIndex(0)
+      clearStorageCanvasState()
+    }
+  }
+
   return (
     <ContextProvider
       value={{
@@ -87,6 +97,7 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
         redo,
         canUndo,
         canRedo,
+        reset,
       }}
     >
       {children}
