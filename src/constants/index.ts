@@ -15,4 +15,7 @@ export const STORAGE_KEY = {
   UNDO_HISTORY: "konva_undo_history",
   /** Undo/Redo Pointer */
   HISTORY_INDEX: "konva_history_index",
+
+  /** 초기화된 캔버스의 크기 */
+  CANVAS_SIZE: "konva_canvas_size",
 }

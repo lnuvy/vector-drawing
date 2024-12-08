@@ -75,3 +75,21 @@ export const clearStorageCanvasState = (): void => {
   removeStorage(STORAGE_KEY.UNDO_HISTORY)
   removeStorage(STORAGE_KEY.HISTORY_INDEX)
 }
+
+/** ------------------------------------------------------------------------------
+ * 
+ * 큰 화면에서 작업 후 새로고침시 window.innerWidth 때문에 넘친 작업분이
+ * 스크롤이 되지않고 잘리는 현상을 발생해 추가
+ * 
+ ------------------------------------------------------------------------------ */
+export const getCanvasSize = () => {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight - 72,
+  }
+}
+
+export const getStorageStageSize = () => {
+  const size = getStorageParsed<{ width: number; height: number }>(STORAGE_KEY.CANVAS_SIZE)
+  return size ?? getCanvasSize()
+}

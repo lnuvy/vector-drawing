@@ -1,16 +1,32 @@
+import { useEffect, useState } from "react"
 import { Ellipse, Layer, Line, Rect, Stage } from "react-konva"
 import Konva from "konva"
+import { STORAGE_KEY } from "@/constants"
 import { useSelectToolContext } from "@/contexts/select-tool-context"
 import { useShapesHistoryContext } from "@/contexts/shapes-history-context"
+import { getCanvasSize, getStorageStageSize, setStorage } from "@/functions/util"
 import { useCreateShapeEvent } from "@/hooks/use-create-shape-event"
 import { Shape, Tool } from "@/types"
 import SimpleLinePreview from "./simple-line-preview"
 
 const KonvaStage = () => {
+  const [stageSize] = useState(getStorageStageSize)
+
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
   const { shapes, setShapes, setShapesWithHistory } = useShapesHistoryContext()
   const { tool } = useSelectToolContext()
 
+  // 약간의 야매
+  useEffect(() => {
+    const size = getStorageStageSize()
+    if (!size) {
+      setStorage(STORAGE_KEY.CANVAS_SIZE, JSON.stringify(getCanvasSize()))
+    }
+  }, [])
+
+  /**
+   * 도형 type별로 그룹화
+   */
   const groupByShapeType = shapes.reduce(
     (acc, shape) => {
       const key = shape.type
@@ -61,8 +77,8 @@ const KonvaStage = () => {
 
   return (
     <Stage
-      width={window.innerWidth}
-      height={window.innerHeight - 72}
+      width={stageSize.width}
+      height={stageSize.height}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}

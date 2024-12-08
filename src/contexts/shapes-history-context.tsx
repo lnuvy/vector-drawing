@@ -2,7 +2,14 @@ import { useState } from "react"
 import type Konva from "konva"
 import { STORAGE_KEY, UNDO_MAX_COUNT } from "@/constants"
 
-import { clearStorageCanvasState, getStorage, getStorageParsed, setStorageCanvasState } from "@/functions/util"
+import {
+  clearStorageCanvasState,
+  getCanvasSize,
+  getStorage,
+  getStorageParsed,
+  setStorage,
+  setStorageCanvasState,
+} from "@/functions/util"
 import { createDynamicContext } from "@/hooks/create-dynamic-context"
 import { Shape } from "@/types"
 
@@ -63,6 +70,12 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
     if (currentHistoryIndex > 0) {
       setCurrentHistoryIndex(prev => prev - 1)
       setShapes(history[currentHistoryIndex - 1])
+
+      setStorageCanvasState({
+        shapes: history[currentHistoryIndex - 1],
+        history: history,
+        historyIndex: currentHistoryIndex - 1,
+      })
     }
   }
 
@@ -70,6 +83,12 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
     if (currentHistoryIndex < history.length - 1) {
       setCurrentHistoryIndex(prev => prev + 1)
       setShapes(history[currentHistoryIndex + 1])
+
+      setStorageCanvasState({
+        shapes: history[currentHistoryIndex + 1],
+        history: history,
+        historyIndex: currentHistoryIndex + 1,
+      })
     }
   }
 
@@ -82,6 +101,9 @@ export const ShapesHistoryContextProvider = ({ children }: { children: React.Rea
       setHistory([[]])
       setCurrentHistoryIndex(0)
       clearStorageCanvasState()
+
+      // 초기화 시점의 캔버스 사이즈를 다시 저장
+      setStorage(STORAGE_KEY.CANVAS_SIZE, JSON.stringify(getCanvasSize()))
     }
   }
 
