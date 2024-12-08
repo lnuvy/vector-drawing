@@ -5,6 +5,8 @@
 - React
 - TypeScript
 - Vite
+- [TailwindCSS](https://tailwindcss.com/) (스타일링)
+- [lucide-react](https://lucide.dev/) (아이콘)
 - [Konva.js](https://konvajs.org/)
 - [Konva React](https://konvajs.org/docs/react/Intro.html)
 
