@@ -1,7 +1,7 @@
+import { useEffect } from "react"
 import { Tool, useSelectToolContext } from "@/contexts/select-tool-context"
 import { useShapesHistoryContext } from "@/contexts/shapes-history-context"
 import { isMac } from "@/functions/util"
-import { useEffect } from "react"
 
 export const useKeyBindingTools = () => {
   const { setTool } = useSelectToolContext()
