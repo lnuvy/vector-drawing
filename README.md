@@ -1,50 +1,47 @@
-# React + TypeScript + Vite
+# 벡터(SVG) 기반의 드로잉 툴 구현
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-Currently, two official plugins are available:
+### 사용 기술
+- React
+- TypeScript
+- Vite
+- [Konva.js](https://konvajs.org/)
+- [Konva React](https://konvajs.org/docs/react/Intro.html)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
 
-## Expanding the ESLint configuration
+### 구현 내용
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- 드로잉 타입 선택
+  - 직선
+  - 곡선 (자유로운 선 드로잉)
+  - 타원 (shift 키 조합 시 원)
+  - 직사각형 (shift 키 조합 시 정사각형)
+  - 다각형 (3 ~ 9각형까지 허용)
 
-- Configure the top-level `parserOptions` property like this:
+- 드로잉 타입 키보드로 선택 가능
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+- 선 두께/컬러 선택
+  - 선 두께는 5px ~ 50px
+    - input type="range" 로 간단히 구현
+  - 컬러는 input type="color" 로 간단히 구현
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+- Undo, Redo
+  - 최근 40개의 작업 기록만 저장
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+- Transformer
+  - 선택한 도형의 크기/각도 조절
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
-```
+
+
+
+### 회고
+
+Konva.js 라이브러리 라는 벡터기반 드로잉 툴을 접해볼 수 있어 즐거운 경험이었습니다. 개인적인 사정으로 이번 주말에 시간이 많이 부족했어서, 조금더 정리된 구조와 구현을 하지 못한게 아쉽지만~~핑계입니다~~, 주어진 시간 내 최선을 다했습니다.
+
+공식문서에는 따로 Demo나 Example이 친절하진 않았지만 생각보다 많은 기능들이 React-Konva 에 내장돼있어서 큰 어려움 없이 구현할 수 있었습니다.
+조금 어색한 부분들이 없진 않지만, 나름대로 자연스러운 좌표를 위해 계산기를 수없이 쓰고 AI에게도 물어보면서 작업했던 것 같습니다.
+
+디자인 센스는 꽝이기도 하고, 새로운 라이브러리의 기능을 확인하고 적용해보는데 시간을 많이 사용해서 UI적인 부분은 너그럽게 이해해주시면 감사하겠습니다. :)
+
+감사합니다.
+이한울 드림
