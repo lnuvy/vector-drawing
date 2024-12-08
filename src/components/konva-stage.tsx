@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react"
-import { Ellipse, Layer, Line, Rect, RegularPolygon, Stage } from "react-konva"
+import { Ellipse, Layer, Line, Rect, RegularPolygon, Stage, Transformer } from "react-konva"
 import Konva from "konva"
 import { STORAGE_KEY } from "@/constants"
 import { useSelectToolContext } from "@/contexts/select-tool-context"
 import { useShapesHistoryContext } from "@/contexts/shapes-history-context"
 import { getCanvasSize, getStorageStageSize, setStorage } from "@/functions/util"
 import { useCreateShapeEvent } from "@/hooks/use-create-shape-event"
+import { useTransformerHandler } from "@/hooks/use-transformer-handler"
 import { Shape, Tool } from "@/types"
 import SimpleLinePreview from "./simple-line-preview"
 
@@ -15,6 +16,15 @@ const KonvaStage = () => {
   const { handleMouseDown, handleMouseMove, handleMouseUp } = useCreateShapeEvent()
   const { shapes, setShapes, setShapesWithHistory } = useShapesHistoryContext()
   const { tool } = useSelectToolContext()
+
+  const { transformerRef, setSelectedId, handleTransformEnd } = useTransformerHandler()
+
+  const handleOutsideSelect = (e: Konva.KonvaEventObject<MouseEvent>) => {
+    const clickedOnEmpty = e.target === e.target.getStage()
+    if (clickedOnEmpty) {
+      setSelectedId(null)
+    }
+  }
 
   // 약간의 야매
   useEffect(() => {
@@ -64,7 +74,6 @@ const KonvaStage = () => {
             return newLine
           }
 
-          // 기본 도형들은 e.target.x/y()로 업데이트
           default: {
             updatedShape.x = e.target.x()
             updatedShape.y = e.target.y()
@@ -82,24 +91,28 @@ const KonvaStage = () => {
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
+      onClick={handleOutsideSelect}
     >
       {Object.entries(groupByShapeType).map(([type, shapes]) => {
         return (
           <Layer key={type}>
+            <Transformer ref={transformerRef} />
+
             {shapes.map(shape => {
+              const commonShapeProps = {
+                id: shape.id,
+                opacity: shape.isDragging ? 0.5 : 1,
+                stroke: shape.stroke,
+                strokeWidth: shape.strokeWidth,
+                draggable: tool === Tool.Cursor,
+                onClick: () => setSelectedId(shape.id),
+                onDragStart: () => dragStartHandler(shape),
+                onDragEnd: (e: Konva.KonvaEventObject<Event>) => dragEndHandler(e, shape),
+                onTransformEnd: handleTransformEnd,
+              }
+
               if (type === Tool.Spline || type === Tool.SimpleLine) {
-                return (
-                  <Line
-                    key={shape.id}
-                    points={shape.points}
-                    stroke={shape.stroke}
-                    opacity={shape.isDragging ? 0.5 : 1}
-                    strokeWidth={shape.strokeWidth}
-                    draggable={tool === Tool.Cursor}
-                    onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={e => dragEndHandler(e, shape)}
-                  />
-                )
+                return <Line key={shape.id} points={shape.points} {...commonShapeProps} />
               }
 
               if (type === Tool.Circle) {
@@ -110,27 +123,13 @@ const KonvaStage = () => {
                     y={shape.y}
                     radiusX={shape.radiusX}
                     radiusY={shape.radiusY}
-                    stroke={shape.stroke}
-                    strokeWidth={shape.strokeWidth}
-                    opacity={shape.isDragging ? 0.5 : 1}
-                    draggable={tool === Tool.Cursor}
-                    onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={e => dragEndHandler(e, shape)}
+                    {...commonShapeProps}
                   />
                 )
               }
 
               if (type === Tool.Rect) {
-                return (
-                  <Rect
-                    key={shape.id}
-                    {...shape}
-                    draggable={tool === Tool.Cursor}
-                    opacity={shape.isDragging ? 0.5 : 1}
-                    onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={e => dragEndHandler(e, shape)}
-                  />
-                )
+                return <Rect key={shape.id} {...shape} {...commonShapeProps} />
               }
 
               if (type === Tool.Polygon) {
@@ -141,12 +140,7 @@ const KonvaStage = () => {
                     y={shape.y}
                     sides={shape.sides}
                     radius={shape.radius}
-                    stroke={shape.stroke}
-                    strokeWidth={shape.strokeWidth}
-                    draggable={tool === Tool.Cursor}
-                    opacity={shape.isDragging ? 0.5 : 1}
-                    onDragStart={() => dragStartHandler(shape)}
-                    onDragEnd={e => dragEndHandler(e, shape)}
+                    {...commonShapeProps}
                   />
                 )
               }
