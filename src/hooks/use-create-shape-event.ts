@@ -8,20 +8,18 @@ import { Point, Shape, Tool } from "@/types"
  * 
  * 모든 도형의 생성을 관리하는 공용 훅입니다.
  * 
- * @return {
- *   KonvaNodeEvents.onMouseDown,
- *   KonvaNodeEvents.onMouseMove,
- *   KonvaNodeEvents.onMouseUp
- * }
- * 
  * @comment 만약 점점 요구사항이 많아지고 사이즈가 커지면 인자로 선택된 툴 종류를 받아서 각각 분리해서 관리하는 것이 좋을 것 같습니다.
  * 
  ------------------------------------------------------------------------------ */
-export const useCreateShapeEvent = () => {
+export const useCreateShapeEvent = (): {
+  handleMouseDown: (e: Konva.KonvaEventObject<Event>) => void
+  handleMouseMove: (e: Konva.KonvaEventObject<Event>) => void
+  handleMouseUp: (e: Konva.KonvaEventObject<Event>) => void
+} => {
   const [startPoint, setStartPoint] = useState<Point | null>(null)
   const [isLineDrawing, setIsLineDrawing] = useState(false)
 
-  const { color, weight, tool } = useSelectToolContext()
+  const { color, weight, tool, sides } = useSelectToolContext()
   const { shapes, setShapes, setShapesWithHistory, setPreviewLine } = useShapesHistoryContext()
 
   const handleMouseDown = (e: Konva.KonvaEventObject<Event>) => {
@@ -73,6 +71,22 @@ export const useCreateShapeEvent = () => {
         break
       }
 
+      case Tool.Polygon: {
+        const newShape: Shape = {
+          type: Tool.Polygon,
+          id: String(shapes.length),
+          isDragging: false,
+          x: pos.x,
+          y: pos.y,
+          sides: Number(sides),
+          radius: 0,
+          stroke: color,
+          strokeWidth: weight,
+        }
+        setShapes(prev => [...prev, newShape])
+        break
+      }
+
       case Tool.SimpleLine: {
         const newShape: Shape = {
           type: Tool.SimpleLine,
@@ -110,20 +124,17 @@ export const useCreateShapeEvent = () => {
     const stage = e.target.getStage()
     const pos = stage?.getPointerPosition()
     if (!pos || !startPoint) return
+    const { shiftKey } = e.evt as MouseEvent
+    const { x: startX, y: startY } = startPoint
 
     switch (tool) {
       case Tool.Circle: {
-        const { shiftKey } = e.evt as MouseEvent
-        const { x: startX, y: startY } = startPoint
         const width = pos.x - startX
         const height = pos.y - startY
         const radiusX = Math.abs(width) / 2
         const radiusY = Math.abs(height) / 2
 
         setShapes(prev => {
-          const lastShape = prev[prev.length - 1]
-          if (lastShape?.type !== Tool.Circle) return prev
-
           return prev.map((shape, index) =>
             index === prev.length - 1
               ? {
@@ -140,8 +151,6 @@ export const useCreateShapeEvent = () => {
       }
 
       case Tool.Rect: {
-        const { shiftKey } = e.evt as MouseEvent
-        const { x: startX, y: startY } = startPoint
         let width = pos.x - startX
         let height = pos.y - startY
 
@@ -152,9 +161,6 @@ export const useCreateShapeEvent = () => {
         }
 
         setShapes(prev => {
-          const lastShape = prev[prev.length - 1]
-          if (lastShape?.type !== Tool.Rect) return prev
-
           return prev.map((shape, index) =>
             index === prev.length - 1
               ? {
@@ -168,9 +174,28 @@ export const useCreateShapeEvent = () => {
         break
       }
 
+      case Tool.Polygon: {
+        const width = pos.x - startX
+        const height = pos.y - startY
+        const radius = Math.sqrt(width * width + height * height) / 2
+
+        setShapes(prev => {
+          return prev.map((shape, index) =>
+            index === prev.length - 1
+              ? {
+                  ...shape,
+                  x: startX + width / 2,
+                  y: startY + height / 2,
+                  radius,
+                }
+              : shape,
+          )
+        })
+        break
+      }
+
       case Tool.SimpleLine: {
         if (!isLineDrawing) return
-        const { x: startX, y: startY } = startPoint
         setPreviewLine({
           points: [startX, startY, pos.x, pos.y],
         })
@@ -180,9 +205,6 @@ export const useCreateShapeEvent = () => {
       case Tool.Spline: {
         if (!isLineDrawing) return
         setShapes(prev => {
-          const lastShape = prev[prev.length - 1]
-          if (lastShape?.type !== Tool.Spline) return prev
-
           return prev.map((shape, index) =>
             index === prev.length - 1
               ? {
@@ -227,6 +249,7 @@ export const useCreateShapeEvent = () => {
       case Tool.Circle:
       case Tool.Rect:
       case Tool.Spline:
+      case Tool.Polygon:
         setShapesWithHistory(prev => {
           const lastShape = prev[prev.length - 1]
           if (lastShape?.type !== Tool.Spline) return prev

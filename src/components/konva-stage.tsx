@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Ellipse, Layer, Line, Rect, Stage } from "react-konva"
+import { Ellipse, Layer, Line, Rect, RegularPolygon, Stage } from "react-konva"
 import Konva from "konva"
 import { STORAGE_KEY } from "@/constants"
 import { useSelectToolContext } from "@/contexts/select-tool-context"
@@ -125,6 +125,24 @@ const KonvaStage = () => {
                   <Rect
                     key={shape.id}
                     {...shape}
+                    draggable={tool === Tool.Cursor}
+                    opacity={shape.isDragging ? 0.5 : 1}
+                    onDragStart={() => dragStartHandler(shape)}
+                    onDragEnd={e => dragEndHandler(e, shape)}
+                  />
+                )
+              }
+
+              if (type === Tool.Polygon) {
+                return (
+                  <RegularPolygon
+                    key={shape.id}
+                    x={shape.x}
+                    y={shape.y}
+                    sides={shape.sides}
+                    radius={shape.radius}
+                    stroke={shape.stroke}
+                    strokeWidth={shape.strokeWidth}
                     draggable={tool === Tool.Cursor}
                     opacity={shape.isDragging ? 0.5 : 1}
                     onDragStart={() => dragStartHandler(shape)}

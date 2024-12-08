@@ -53,30 +53,32 @@ const ToolsHeader = () => {
           </Fragment>
         ))}
 
-        {polygonInputShow && (
-          <div
-            ref={inRef}
-            className={cn(
-              "absolute animate-translate-fade-in -bottom-24 right-0 w-20 h-24 p-4 border rounded-1 border-gray-300",
-            )}
-          >
-            <label>
-              꼭짓점
-              <input
-                ref={inputRef}
-                value={sides}
-                onChange={e => {
-                  const { value } = e.target
-                  if (value === "" || /^[3-9]$/.test(value)) {
-                    setSides(value)
-                  }
-                }}
-                type="text"
-                className="mt-1 w-full rounded-1 border border-gray-300 px-1 text-right"
-              />
-            </label>
-          </div>
-        )}
+        <div
+          ref={inRef}
+          className={cn(
+            "absolute animate-translate-fade-in -bottom-24 right-0 w-20 h-24 p-4 border rounded-1 border-gray-300",
+            {
+              block: polygonInputShow,
+              hidden: !polygonInputShow,
+            },
+          )}
+        >
+          <label>
+            꼭짓점
+            <input
+              ref={inputRef}
+              value={sides}
+              onChange={e => {
+                const { value } = e.target
+                if (value === "" || /^[3-9]$/.test(value)) {
+                  setSides(value)
+                }
+              }}
+              type="text"
+              className="mt-1 w-full rounded-1 border border-gray-300 px-1 text-right"
+            />
+          </label>
+        </div>
       </div>
     </section>
   )
