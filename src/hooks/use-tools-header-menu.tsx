@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
   Circle,
   Hand,
@@ -28,6 +29,8 @@ interface MenuItem {
 export const useToolsHeaderMenu = () => {
   const { undo, redo, canUndo, canRedo, reset } = useShapesHistoryContext()
   const { setTool } = useSelectToolContext()
+
+  const [polygonInputShow, setPolygonInputShow] = useState(false)
 
   const menus: MenuItem[] = [
     {
@@ -109,9 +112,12 @@ export const useToolsHeaderMenu = () => {
       Icon: Pentagon,
       split: false,
       disabled: false,
-      onClick: () => setTool(Tool.Polygon),
+      onClick: () => {
+        setTool(Tool.Polygon)
+        setPolygonInputShow(true)
+      },
     },
   ]
 
-  return { menus }
+  return { menus, polygonInputShow, setPolygonInputShow }
 }
